@@ -4,6 +4,7 @@ import requests
 import json
 import time
 from config import RAWG_API_KEY
+from src.logger import logging
 from src.exception import CustomException
 
 URL = f"https://api.rawg.io/api/games"
@@ -12,6 +13,8 @@ JSON_PATH = os.path.join("data", "raw", "games.json")
 games = []
 page = 1
 page_size = 40
+
+logging.info("Starting RAWG API data pull")
 
 while len(games) < 5000:
     params = {
@@ -35,8 +38,6 @@ while len(games) < 5000:
         page += 1
         time.sleep(1)
 
-        print("Number of games: ", len(games))
-
     except Exception as e:
         raise CustomException(e, sys)
 
@@ -45,6 +46,7 @@ try:
         json.dump(games, file, indent=4)
 
 except Exception as e:
+    logging.error(f"API request failed on page {page}")
     raise CustomException(e, sys)
 
-print("Done...")
+logging.info(f"Saved {len(games)} games to {JSON_PATH}")

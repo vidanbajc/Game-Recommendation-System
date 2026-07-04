@@ -1,5 +1,6 @@
 import sys
 from db.connection import data, con
+from logger import logging
 from src.exception import CustomException
 
 cur = con.cursor()
@@ -17,6 +18,7 @@ try:
 except Exception as e:
     raise CustomException(e, sys)
 
+logging.info("Updating database")
 
 for game in data:
     try:
@@ -74,10 +76,11 @@ for game in data:
             cur.execute(query, values)
 
     except Exception as e:
+        logging.error(f"Error processing game_id = {game["id"]}")
         raise CustomException(e, sys) 
 
 con.commit()
-print("Done...")
+logging.info("Database successfully updated")
 
 cur.close()
 con.close()
