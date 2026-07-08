@@ -3,7 +3,7 @@ import pandas as pd
 from sqlalchemy import create_engine
 from config import MYSQL_USER, MYSQL_HOST, MYSQL_PASSWORD, MYSQL_DATABASE
 from urllib.parse import quote_plus
-from logger import logging
+from src.logger import logging
 from src.exception import CustomException
 
 try:

@@ -1,8 +1,9 @@
 import sys
-from db.connection import data, con
-from logger import logging
+from db.connection import load_data, get_connection
+from src.logger import logging
 from src.exception import CustomException
 
+con = get_connection()
 cur = con.cursor()
 
 try:
@@ -19,6 +20,8 @@ except Exception as e:
     raise CustomException(e, sys)
 
 logging.info("Updating database")
+
+data = load_data()
 
 for game in data:
     try:
@@ -76,7 +79,7 @@ for game in data:
             cur.execute(query, values)
 
     except Exception as e:
-        logging.error(f"Error processing game_id = {game["id"]}")
+        logging.error(f"Error processing game_id = {game['id']}")
         raise CustomException(e, sys) 
 
 con.commit()

@@ -3,30 +3,35 @@ import sys
 import json
 import mysql.connector
 from config import MYSQL_USER, MYSQL_HOST, MYSQL_PASSWORD, MYSQL_DATABASE
-from logger import logging
+from src.logger import logging
 from src.exception import CustomException
 
 JSON_PATH = os.path.join("data", "raw", "games.json")
 
-try:
-    logging.info(f"Reading JSON file {JSON_PATH}")
-    with open(JSON_PATH, "r") as file:
-        data = json.load(file)
+def load_data():
+    try:
+        logging.info(f"Reading JSON file {JSON_PATH}")
+        with open(JSON_PATH, "r") as file:
+            data = json.load(file)
 
-except Exception as e:
-    logging.error(f"Failed to read JSON file: {JSON_PATH}")
-    raise CustomException(e, sys)
+        return data
 
+    except Exception as e:
+        logging.error(f"Failed to read JSON file: {JSON_PATH}")
+        raise CustomException(e, sys)
 
-try:
-    logging.info(f"Connecting to MySQL database: {MYSQL_DATABASE}")
-    con = mysql.connector.connect(
-        user=MYSQL_USER,
-        host=MYSQL_HOST,
-        password=MYSQL_PASSWORD,
-        database=MYSQL_DATABASE
-    )
+def get_connection() -> mysql.connector.MySQLConnection:
+    try:
+        logging.info(f"Connecting to MySQL database: {MYSQL_DATABASE}")
+        con = mysql.connector.connect(
+            user=MYSQL_USER,
+            host=MYSQL_HOST,
+            password=MYSQL_PASSWORD,
+            database=MYSQL_DATABASE
+        )
 
-except Exception as e:
-    logging.error(f"Failed to connect to MySQL database: {MYSQL_DATABASE}")
-    raise CustomException(e, sys)
+        return con
+
+    except Exception as e:
+        logging.error(f"Failed to connect to MySQL database: {MYSQL_DATABASE}")
+        raise CustomException(e, sys)
