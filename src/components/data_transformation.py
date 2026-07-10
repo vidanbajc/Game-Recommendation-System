@@ -4,17 +4,17 @@ import pandas as pd
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
 from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.impute import SimpleImputer
 from sklearn.compose import ColumnTransformer
-from sklearn.model_selection import train_test_split
 from src.components.data_cleaning import clean_data
 from src.utils import get_numeric_columns, get_categorical_columns, get_list_columns, save_object
 from src.logger import logging
 from src.exception import CustomException
 
-
 class DataTransformationConfig:
     def __init__(self):
         self.preprocessor_file_path = os.path.join("artifacts", "preprocessor.pkl")
+        self.games_id_name_file_path = os.path.join("artifacts", "games.pkl")
 
 
 class DataTransformation:
@@ -64,6 +64,8 @@ class DataTransformation:
         games["platforms"] = games["platforms"].apply(lambda x: " ".join(x) if isinstance(x, list) else "")
         games["tags"] = games["tags"].apply(lambda x: " ".join(x) if isinstance(x, list) else "")
 
+        #print("NaN Values: ", games.isna().sum())
+
         logging.info("Loading and merging data successfully")
         return games
 
@@ -77,6 +79,7 @@ class DataTransformation:
 
             num_pipeline = Pipeline(
                 steps=[
+                    ("imputer", SimpleImputer(strategy="median")),
                     ("scaler", StandardScaler())
                 ]
             )
@@ -113,17 +116,12 @@ class DataTransformation:
 
     def initiate_data_transformation(self):
         try:
-            games = self.load_and_merge_data(clean_data())
-
-            logging.info("Splitting the data")
-            train_set, test_set = train_test_split(games, test_size=0.3, random_state=42)
-
             logging.info("Building preprocessing pipeline")
 
+            games = self.load_and_merge_data(clean_data())
             preprocessor = self.get_preprocessor()
 
-            train_set_arr = preprocessor.fit_transform(train_set)
-            test_set_arr = preprocessor.transform(test_set)
+            games_arr = preprocessor.fit_transform(games)
 
             logging.info("Data transformation completed successfully")
 
@@ -132,7 +130,12 @@ class DataTransformation:
                 obj=preprocessor
             )
 
-            return train_set_arr, test_set_arr, self.data_transformation_config.preprocessor_file_path
+            save_object(
+                file_path=self.data_transformation_config.games_id_name_file_path,
+                obj=games[["id", "name"]]
+            )
+
+            return games_arr
 
         except Exception as e:
             logging.error(f"Error occurred during data transformation: {str(e)}")

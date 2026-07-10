@@ -15,7 +15,7 @@ def clear_games(games: pd.DataFrame) -> pd.DataFrame:
 
     return games
 
-def clean_data():
+def clean_data() -> dict[str, pd.DataFrame]:
     ingestion = DataIngestion(engine)
     data = ingestion.load_data()
 
