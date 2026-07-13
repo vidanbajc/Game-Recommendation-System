@@ -6,11 +6,11 @@ from src.exception import CustomException
 
 
 def get_numeric_columns() -> list[str]:
-    return ["rating", "ratings_count", "metacritic", "playtime", "release_year"]
+    return ["rating", "metacritic", "release_year"]
 
 
 def get_categorical_columns() -> list[str]:
-    return ["esrb_rating", "release_month"]
+    return ["esrb_rating"]
 
 
 def get_list_columns() -> list[str]:

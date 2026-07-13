@@ -98,13 +98,21 @@ class DataTransformation:
             )
 
             preprocessor = ColumnTransformer(
-                [
+                transformers=[
                     ("num_pipeline", num_pipeline, num_columns),
                     ("cat_pipeline", cat_pipeline, cat_columns),
                     ("genres", list_pipeline, "genres"),
                     ("platforms", list_pipeline, "platforms"),
                     ("tags", list_pipeline, "tags")
-                ]
+                ],
+
+                transformer_weights={
+                    "num_pipeline": 0.1,
+                    "cat_pipeline": 0.1,
+                    "genres": 1.5,
+                    "tags": 3,
+                    "platforms": 0.5
+                }
             )
 
             logging.info("Preprocessing pipeline created successfully")

@@ -28,6 +28,15 @@ class PredictPipeline:
             index = game_row.index[0]
             game_vector = games_arr[index]
 
+            # preprocessor_path = os.path.join("artifacts", "preprocessor.pkl")
+            # preprocessor = load_object(preprocessor_path)
+
+            # feature_names = preprocessor.get_feature_names_out()
+            # feature_scores = zip(feature_names, game_vector.toarray()[0])
+
+            # sorted_features = sorted(feature_scores, key=lambda x: x[1], reverse=True)
+            # print(sorted_features[:15])
+
             _, indices = model.kneighbors(game_vector, n_neighbors=11)
             recommendations = games.iloc[indices[0][1:]]
 
@@ -39,4 +48,4 @@ class PredictPipeline:
         
 #df = PredictPipeline.predict("Minecraft")
 #df = PredictPipeline.predict("Grand Theft Auto V")
-#print(df)
+#print("\n", df)
