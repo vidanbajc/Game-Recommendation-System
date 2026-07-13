@@ -15,6 +15,7 @@ class DataTransformationConfig:
     def __init__(self):
         self.preprocessor_file_path = os.path.join("artifacts", "preprocessor.pkl")
         self.games_id_name_file_path = os.path.join("artifacts", "games.pkl")
+        self.games_arr_file_path = os.path.join("artifacts", "games_arr.pkl")
 
 
 class DataTransformation:
@@ -133,6 +134,11 @@ class DataTransformation:
             save_object(
                 file_path=self.data_transformation_config.games_id_name_file_path,
                 obj=games[["id", "name"]]
+            )
+
+            save_object(
+                file_path=self.data_transformation_config.games_arr_file_path,
+                obj=games_arr
             )
 
             return games_arr

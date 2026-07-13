@@ -31,3 +31,12 @@ def save_object(file_path: str, obj):
     except Exception as e:
         logging.error(f"Error occurred during saving object: {str(e)}")
         raise CustomException(e, sys)
+
+def load_object(file_path: str) -> object:
+    try:
+        with open(file_path, "rb") as file:
+            return dill.load(file)
+
+    except Exception as e:
+        logging.error(f"Error occurred during loading object: {str(e)}")
+        raise CustomException(e, sys)
