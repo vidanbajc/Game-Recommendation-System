@@ -8,7 +8,7 @@ from src.exception import CustomException
 class PredictPipeline:
 
     @staticmethod
-    def predict(game_name: str) -> pd.DataFrame:
+    def recommend(game_name: str) -> pd.DataFrame:
         try:
             logging.info(f"Finding recommendations for {game_name}")
 
@@ -20,7 +20,7 @@ class PredictPipeline:
             games = load_object(games_path)
             games_arr = load_object(games_arr_path)
 
-            game_row = games[games["name"] == game_name]
+            game_row = games[games["name"].str.lower() == game_name.strip().lower()]
 
             if game_row.empty:
                 raise ValueError(f"Game {game_name} is not found")
@@ -43,9 +43,9 @@ class PredictPipeline:
             return recommendations
 
         except Exception as e:
-            logging.error(f"Error in game prediction: {str(e)}")
+            logging.error(f"Error in game recommendation: {str(e)}")
             raise CustomException(e, sys)
         
-#df = PredictPipeline.predict("Minecraft")
-#df = PredictPipeline.predict("Grand Theft Auto V")
+#df = PredictPipeline.recommend("Minecraft")
+#df = PredictPipeline.recommend("Grand Theft Auto V")
 #print("\n", df)

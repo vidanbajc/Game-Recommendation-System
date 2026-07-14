@@ -9,7 +9,8 @@ create table games (
     ratings_count int,
     metacritic int,
     playtime int,
-    esrb_rating varchar(50)
+    esrb_rating varchar(50),
+    image_url varchar(500);
 );
 
 create table genres (

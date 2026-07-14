@@ -26,8 +26,9 @@ data = load_data()
 for game in data:
     try:
         values = (game["id"], game["name"], game["released"], game["rating"], game["ratings_count"], 
-                   game["metacritic"], game["playtime"], game["esrb_rating"]["name"] if game.get("esrb_rating") else None)
-        query = "insert ignore into games(id, name, released, rating, ratings_count, metacritic, playtime, esrb_rating) values (%s, %s, %s, %s, %s, %s, %s, %s)"
+                   game["metacritic"], game["playtime"], game["esrb_rating"]["name"] if game.get("esrb_rating") else None, game["background_image"])
+        query = """insert ignore into games(id, name, released, rating, ratings_count, metacritic, playtime, esrb_rating, image_url) 
+                    values (%s, %s, %s, %s, %s, %s, %s, %s, %s)"""
         cur.execute(query, values)
 
         for genre in game["genres"]:
