@@ -17,8 +17,13 @@ def recommend(request: Request):
 
 @app.post("/recommend")
 def recommend_game(request: Request, game_name: str = Form(...)):
-    
-    recommendation_df = PredictPipeline.recommend(game_name)
-    games = recommendation_df.to_dict(orient="records")
 
-    return templates.TemplateResponse(request=request, name="recommend.html", context={"similar_games": games})
+    try:
+        recommendation_df = PredictPipeline.recommend(game_name)
+        games = recommendation_df.to_dict(orient="records")
+
+        return templates.TemplateResponse(request=request, name="recommend.html", context={"similar_games": games, "error":None, "game_name": game_name})
+    
+    except ValueError as e:
+        return templates.TemplateResponse(request=request, name="recommend.html", context={"similar_games": [], "error":str(e), "game_name": game_name})
+    

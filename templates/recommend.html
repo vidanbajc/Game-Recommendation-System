@@ -16,7 +16,11 @@
     <form action="/recommend" method="post" class="row justify-content-center mb-5">
 
         <div class="col-md-6">
-            <input type="text" class="form-control form-control-lg" name="game_name" placeholder="Enter game name..." required>
+            <input type="text" class="form-control form-control-lg {% if error %}is-invalid{% endif %}" name="game_name" value="{{ game_name }}" placeholder="Enter game name..." required>
+
+            {% if error %}
+                <div class="invalid-feedback">{{ error }}</div>
+            {% endif %}
         </div>
 
         <div class="col-auto">

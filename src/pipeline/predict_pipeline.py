@@ -42,6 +42,9 @@ class PredictPipeline:
 
             return recommendations
 
+        except ValueError:
+            raise
+
         except Exception as e:
             logging.error(f"Error in game recommendation: {str(e)}")
             raise CustomException(e, sys)
