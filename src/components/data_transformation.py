@@ -14,7 +14,8 @@ from src.exception import CustomException
 class DataTransformationConfig:
     def __init__(self):
         self.preprocessor_file_path = os.path.join("artifacts", "preprocessor.pkl")
-        self.games_id_name_file_path = os.path.join("artifacts", "games.pkl")
+        #self.games_id_name_file_path = os.path.join("artifacts", "games.pkl")
+        self.games_meta_file_path = os.path.join("artifacts", "games_meta.pkl")
         self.games_arr_file_path = os.path.join("artifacts", "games_arr.pkl")
 
 
@@ -130,12 +131,7 @@ class DataTransformation:
             games = self.load_and_merge_data(clean_data())
             preprocessor = self.get_preprocessor()
 
-            save_object(
-                file_path=self.data_transformation_config.games_id_name_file_path,
-                obj=games[["id", "name", "image_url"]]
-            )
-
-            games.drop(columns=["image_url"], inplace=True)
+            games_meta = games[["id", "name"]].reset_index(drop=True)
             games_arr = preprocessor.fit_transform(games)
 
             logging.info("Data transformation completed successfully")
@@ -148,6 +144,11 @@ class DataTransformation:
             save_object(
                 file_path=self.data_transformation_config.games_arr_file_path,
                 obj=games_arr
+            )
+
+            save_object(
+                file_path=self.data_transformation_config.games_meta_file_path,
+                obj=games_meta
             )
 
             return games_arr

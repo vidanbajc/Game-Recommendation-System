@@ -1,44 +1,42 @@
 import os
 import sys
 import pandas as pd
+from db.connection import get_engine
 from src.utils import load_object
 from src.logger import logging
 from src.exception import CustomException
+
+model_path = os.path.join("artifacts", "model.pkl")
+games_arr_path = os.path.join("artifacts", "games_arr.pkl")
+games_meta_path = os.path.join("artifacts", "games_meta.pkl")
+
+MODEL = load_object(model_path)
+GAMES_ARR = load_object(games_arr_path)
+GAMES_META = load_object(games_meta_path)
+engine = get_engine()
 
 class PredictPipeline:
 
     @staticmethod
     def recommend(game_name: str) -> pd.DataFrame:
         try:
+            
             logging.info(f"Finding recommendations for {game_name}")
 
-            model_path = os.path.join("artifacts", "model.pkl")
-            games_path = os.path.join("artifacts", "games.pkl")
-            games_arr_path = os.path.join("artifacts", "games_arr.pkl")
-
-            model = load_object(model_path)
-            games = load_object(games_path)
-            games_arr = load_object(games_arr_path)
-
-            game_row = games[games["name"].str.lower() == game_name.strip().lower()]
+            game_row = GAMES_META[GAMES_META["name"].str.lower() == game_name.strip().lower()]
 
             if game_row.empty:
                 raise ValueError(f"Game {game_name} is not found")
-
+            
             index = game_row.index[0]
-            game_vector = games_arr[index]
+            game_vector = GAMES_ARR[index]
 
-            # preprocessor_path = os.path.join("artifacts", "preprocessor.pkl")
-            # preprocessor = load_object(preprocessor_path)
+            _, indices = MODEL.kneighbors(game_vector, n_neighbors=11)
+            ids = GAMES_META.iloc[indices[0][1:]]["id"].tolist()
 
-            # feature_names = preprocessor.get_feature_names_out()
-            # feature_scores = zip(feature_names, game_vector.toarray()[0])
-
-            # sorted_features = sorted(feature_scores, key=lambda x: x[1], reverse=True)
-            # print(sorted_features[:15])
-
-            _, indices = model.kneighbors(game_vector, n_neighbors=11)
-            recommendations = games.iloc[indices[0][1:]]
+            placeholders = ", ".join(["%s"] * len(ids))
+            query = f"select id, name, image_url from games where id in ({placeholders})"
+            recommendations = pd.read_sql(query, engine, params=tuple(ids))
 
             return recommendations
 

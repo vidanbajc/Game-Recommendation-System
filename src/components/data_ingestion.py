@@ -1,18 +1,7 @@
 import sys
 import pandas as pd
-from sqlalchemy import create_engine
-from config import MYSQL_USER, MYSQL_HOST, MYSQL_PASSWORD, MYSQL_DATABASE
-from urllib.parse import quote_plus
 from src.logger import logging
 from src.exception import CustomException
-
-try:
-    password = quote_plus(MYSQL_PASSWORD)
-    engine = create_engine(f"mysql+pymysql://{MYSQL_USER}:{password}@{MYSQL_HOST}/{MYSQL_DATABASE}")
-
-except Exception as e:
-    raise CustomException(e, sys)
-
 
 class DataIngestion:
     def __init__(self, engine):
@@ -43,7 +32,7 @@ class DataIngestion:
             }
 
         except Exception as e:
-            logging.error(f"Data ingestion failed while reading from MySQL database: {MYSQL_DATABASE}")
+            logging.error(f"Data ingestion failed while reading from MySQL database.")
             raise CustomException(e, sys)
         
 # ingestion = DataIngestion(engine)

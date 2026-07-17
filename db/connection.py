@@ -2,7 +2,9 @@ import os
 import sys
 import json
 import mysql.connector
+from sqlalchemy import create_engine
 from config import MYSQL_USER, MYSQL_HOST, MYSQL_PASSWORD, MYSQL_DATABASE
+from urllib.parse import quote_plus
 from src.logger import logging
 from src.exception import CustomException
 
@@ -34,4 +36,13 @@ def get_connection() -> mysql.connector.MySQLConnection:
 
     except Exception as e:
         logging.error(f"Failed to connect to MySQL database: {MYSQL_DATABASE}")
+        raise CustomException(e, sys)
+
+def get_engine():
+    try:
+        password = quote_plus(MYSQL_PASSWORD)
+        engine = create_engine(f"mysql+pymysql://{MYSQL_USER}:{password}@{MYSQL_HOST}/{MYSQL_DATABASE}")
+        return engine
+
+    except Exception as e:
         raise CustomException(e, sys)
