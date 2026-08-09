@@ -94,11 +94,15 @@ It also includes rate limiting using **SlowAPI** on the prediction endpoint.
 
 ## ▶️ How to Run the Project
 
+### Prerequisites
+Make sure you have installed:
+* Docker
+* Docker Desktop
+
 ### Clone the repository and install the required libraries:
 ```bash
 git clone https://github.com/vidanbajc/Game-Recommendation-System.git
 cd Game-Recommendation-System
-pip install -r requirements.txt
 ```
 
 ### Create a .env file in the root directory with your API key and database credentials:
@@ -111,9 +115,22 @@ DB_PASSWORD=your_db_password
 DB_DATABASE=your_db_name
 ```
 
-### Run the FastAPI app:
+### Build and start the application:
 ```bash
-uvicorn app:app --reload
+docker compose up -d --build
+```
+
+### Load game data:
+```bash
+docker exec -it game-recommendation-api python -m db.load_games
+```
+
+### Open the application:
+Open http://localhost:8000 in your browser
+
+### Stop the application
+```bash
+docker compose down
 ```
 
 ---

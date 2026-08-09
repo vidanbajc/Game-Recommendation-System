@@ -1,5 +1,5 @@
-create database game_recommender;
-use game_recommender;
+-- create database game_recommender;
+-- use game_recommender;
 
 create table games (
     id int primary key,
@@ -10,7 +10,7 @@ create table games (
     metacritic int,
     playtime int,
     esrb_rating varchar(50),
-    image_url varchar(500);
+    image_url varchar(500)
 );
 
 create table genres (
