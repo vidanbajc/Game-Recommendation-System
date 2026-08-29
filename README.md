@@ -122,7 +122,7 @@ docker compose up -d --build
 
 ### Load game data:
 ```bash
-docker exec -it game-recommendation-api python -m db.load_games
+docker compose --profile data-insert run --rm loader
 ```
 
 ### Open the application:
